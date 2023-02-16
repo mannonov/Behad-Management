@@ -5,12 +5,15 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.behad.adid.BehadADID
 import com.behad.adid.BehadCallBack
+import com.behad.auth.AuthCallBack
+import com.behad.auth.BackendErrorException
+import com.behad.auth.NotFoundException
 import com.behad.auth.ServiceLocator
-import kotlinx.coroutines.runBlocking
+import com.behad.auth.auth.model.User
 
 class MainActivity : AppCompatActivity() {
 
-    private var adId: String? = null
+    private val TAG = "MainActivityRE"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -23,16 +26,41 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onSuccess(string: String?) {
                     string?.let {
-                        adId = it
                         ServiceLocator.init(
                             it,
                             this@MainActivity,
                             "",
-                            "test-management",
+                            "rangli",
+                            "sadhjasbd",
                         )
                     }
+                    getUserData()
                 }
             },
         )
+    }
+
+    private fun getUserData() {
+        ServiceLocator.getUserData(object : AuthCallBack {
+            override fun onLoading() {
+                Log.d(TAG, "onLoading: ")
+            }
+
+            override fun onSuccess(user: User) {
+                Log.d(TAG, "onSuccess: ")
+            }
+
+            override fun onNotFoundUser(notFoundException: NotFoundException) {
+                Log.d(TAG, "onNotFoundUser: ")
+            }
+
+            override fun onBackendError(e: BackendErrorException) {
+                Log.d(TAG, "onBackendError: ")
+            }
+
+            override fun onFailure(e: Exception) {
+                Log.d(TAG, "onFailure: ")
+            }
+        })
     }
 }

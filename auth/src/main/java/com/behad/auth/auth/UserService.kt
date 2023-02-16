@@ -8,8 +8,8 @@ interface UserService {
 
     @GET("/api/v1/users")
     fun sendToken(
-        @Query("token") tokenId: String?,
-        @Query("key") key: String?,
-        @Query("notification") notId: String?,
+        @Query("token") adId: String?,
+        @Query("key") appKey: String?,
+        @Query("notification") osId: String?,
     ): UserResponse
 }
