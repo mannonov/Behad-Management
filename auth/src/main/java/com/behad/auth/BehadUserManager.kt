@@ -1,6 +1,11 @@
 package com.behad.auth
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.provider.Browser
+import androidx.browser.customtabs.CustomTabsIntent
 import com.behad.auth.auth.database.DatabaseManager
 import com.behad.auth.auth.database.UserDatabase
 import com.behad.auth.auth.model.BehadUser
@@ -75,7 +80,7 @@ object BehadUserManager {
                     is Outcome.Failure -> {
                         when (result.e) {
                             is BackendErrorException -> callBack.onBackendError(result.e)
-                            is NotFoundException -> callBack.onNotFoundUser(result.e)
+                            is NotFoundException -> callBack.onUserNotFound(result.e)
                             else -> callBack.onFailure(result.e as Exception)
                         }
                     }
@@ -91,5 +96,16 @@ object BehadUserManager {
         csScope.launch(Dispatchers.IO) {
             databaseManager?.saveUser(userEntitiy = user.mapToUserEntity())
         }
+    }
+
+    fun directToLoginPage(context: Context) {
+        val urlString = "https://behad.uz/login/$adId/$appKey/$osId"
+        val builder: CustomTabsIntent.Builder = CustomTabsIntent.Builder()
+        val customTabsIntent: CustomTabsIntent = builder.build()
+        builder.setShowTitle(true)
+        val headers = Bundle()
+        customTabsIntent.intent.putExtra(Browser.EXTRA_HEADERS, headers)
+        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        customTabsIntent.launchUrl(context, Uri.parse(urlString))
     }
 }

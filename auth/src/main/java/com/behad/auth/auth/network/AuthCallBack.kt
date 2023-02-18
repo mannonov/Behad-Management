@@ -10,7 +10,7 @@ interface AuthCallBack {
 
     fun onSuccess(user: User)
 
-    fun onNotFoundUser(notFoundException: NotFoundException)
+    fun onUserNotFound(notFoundException: NotFoundException)
 
     fun onBackendError(e: BackendErrorException)
 
