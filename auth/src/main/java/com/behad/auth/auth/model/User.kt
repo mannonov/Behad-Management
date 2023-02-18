@@ -8,7 +8,7 @@ typealias UserResponse = Deferred<Response<User?>>
 
 data class User(
     @SerializedName("data")
-    val userData: UserData? = null,
+    val userData: BehadUser? = null,
     val message: String,
     val status: Int,
 )

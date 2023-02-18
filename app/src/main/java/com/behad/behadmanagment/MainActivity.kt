@@ -5,10 +5,10 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.behad.adid.BehadADID
 import com.behad.adid.BehadCallBack
-import com.behad.auth.AuthCallBack
+import com.behad.auth.auth.network.AuthCallBack
 import com.behad.auth.BackendErrorException
 import com.behad.auth.NotFoundException
-import com.behad.auth.ServiceLocator
+import com.behad.auth.BehadUserManager
 import com.behad.auth.auth.model.User
 
 class MainActivity : AppCompatActivity() {
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onSuccess(string: String?) {
                     string?.let {
-                        ServiceLocator.init(
+                        BehadUserManager.init(
                             it,
                             this@MainActivity,
                             "",
@@ -41,13 +41,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getUserData() {
-        ServiceLocator.getUserData(object : AuthCallBack {
+        BehadUserManager.getUserData(object : AuthCallBack {
             override fun onLoading() {
                 Log.d(TAG, "onLoading: ")
             }
 
             override fun onSuccess(user: User) {
-                Log.d(TAG, "onSuccess: ")
+                Log.d(TAG, "onSuccess: $user")
             }
 
             override fun onNotFoundUser(notFoundException: NotFoundException) {

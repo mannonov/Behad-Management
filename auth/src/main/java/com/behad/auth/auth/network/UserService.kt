@@ -1,4 +1,4 @@
-package com.behad.auth.auth
+package com.behad.auth.auth.network
 
 import com.behad.auth.auth.model.UserResponse
 import retrofit2.http.GET
