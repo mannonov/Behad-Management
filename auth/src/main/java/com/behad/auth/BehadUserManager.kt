@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Browser
 import androidx.browser.customtabs.CustomTabsIntent
+import com.behad.auth.auth.database.DatabaseCallBack
 import com.behad.auth.auth.database.DatabaseManager
 import com.behad.auth.auth.database.UserDatabase
 import com.behad.auth.auth.model.BehadUser
@@ -19,6 +20,7 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -81,7 +83,7 @@ object BehadUserManager {
                         when (result.e) {
                             is BackendErrorException -> callBack.onBackendError(result.e)
                             is NotFoundException -> callBack.onUserNotFound(result.e)
-                            else -> callBack.onFailure(result.e as Exception)
+                            else -> callBack.onFailure(result.e)
                         }
                     }
                     is Outcome.Progress -> {
@@ -95,6 +97,24 @@ object BehadUserManager {
     private fun saveUserDatabase(user: BehadUser) {
         csScope.launch(Dispatchers.IO) {
             databaseManager?.saveUser(userEntitiy = user.mapToUserEntity())
+        }
+    }
+
+    fun getUserDatabase(callBack: DatabaseCallBack) {
+        csScope.launch(Dispatchers.IO) {
+            databaseManager?.getUser()
+                ?.onSuccess {
+                    withContext(Dispatchers.Main) {
+                        if (it != null) {
+                            callBack.onSuccess(it)
+                        }
+                    }
+                }
+                ?.onFailure {
+                    withContext(Dispatchers.Main) {
+                        callBack.onFailure(it)
+                    }
+                }
         }
     }
 

@@ -14,5 +14,5 @@ interface AuthCallBack {
 
     fun onBackendError(e: BackendErrorException)
 
-    fun onFailure(e: Exception)
+    fun onFailure(e: Throwable)
 }

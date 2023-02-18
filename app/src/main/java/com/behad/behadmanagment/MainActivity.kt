@@ -9,6 +9,8 @@ import com.behad.adid.BehadCallBack
 import com.behad.auth.BackendErrorException
 import com.behad.auth.BehadUserManager
 import com.behad.auth.NotFoundException
+import com.behad.auth.auth.database.DatabaseCallBack
+import com.behad.auth.auth.model.BehadUser
 import com.behad.auth.auth.model.User
 import com.behad.auth.auth.network.AuthCallBack
 import com.behad.auth.auth.ui.SignUpBottomSheetDialog
@@ -47,7 +49,7 @@ class MainActivity : AppCompatActivity() {
                         BehadUserManager.init(
                             it,
                             this@MainActivity,
-                            "",
+                            "https://users.behad.uz",
                             "rangli",
                             "sadhjasbd",
                         )
@@ -65,17 +67,26 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onSuccess(user: User) {
-                signUpDialog.showDialog(supportFragmentManager)
+                BehadUserManager.getUserDatabase(object : DatabaseCallBack {
+                    override fun onSuccess(user: BehadUser) {
+                        Log.d(TAG, "onSuccess: $user database")
+                    }
+
+                    override fun onFailure(e: Throwable) {
+                        Log.d(TAG, "onFailure: $e database")
+                    }
+                })
             }
 
             override fun onUserNotFound(notFoundException: NotFoundException) {
+                signUpDialog.showDialog(supportFragmentManager)
             }
 
             override fun onBackendError(e: BackendErrorException) {
                 Log.d(TAG, "onBackendError: ")
             }
 
-            override fun onFailure(e: Exception) {
+            override fun onFailure(e: Throwable) {
                 Log.d(TAG, "onFailure: ")
             }
         })
